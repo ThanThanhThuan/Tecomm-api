@@ -2,7 +2,10 @@
 
 A production-ready RESTful API for an online store with a built-in web frontend, JWT authentication, custom middleware, and full DI wiring.
 
----
+Live: https://tecomm-api.onrender.com/
+
+<img width="1843" height="1083" alt="image" src="https://github.com/user-attachments/assets/b53f7738-05be-4a4d-95b2-418c2f802ba3" />
+
 
 ## 🚀 Quick Start
 
