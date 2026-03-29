@@ -1,0 +1,26 @@
+# .NET
+bin/
+obj/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+*.DotSettings.user
+[Bb]uild/
+[Ll]og/
+[Tt]est/[Rr]esults/
+[Aa][Rr][Mm]/
+[Ll]ibrary/Packages/
+.vs/
+*.rsuser
+
+# IDE
+.vscode/
+.idea/
+
+# Logs
+logs/
+
+# Environment
+appsettings.*.json
+!.appsettings.Development.json

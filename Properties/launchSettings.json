@@ -1,0 +1,12 @@
+{
+  "profiles": {
+    "Tecomm": {
+      "commandName": "Project",
+      "launchBrowser": true,
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      },
+      "applicationUrl": "https://localhost:61906;http://localhost:61907"
+    }
+  }
+}

@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tecomm Store</title>
+  <link rel="stylesheet" href="/css/style.css" />
+</head>
+<body>
+  <nav class="navbar">
+    <div class="nav-brand"><span class="brand-icon">⚡</span><span class="brand-name">Thuan's Tecomm</span></div>
+    <div class="nav-links" id="navLinks">
+      <button class="nav-btn active" data-view="shop">Shop</button>
+      <button class="nav-btn" data-view="orders">My Orders</button>
+      <button class="nav-btn" data-view="inventory">Inventory</button>
+      <button class="nav-btn hidden" data-view="dashboard" id="navDashboard">Dashboard</button>
+      <button class="nav-btn hidden" data-view="manage" id="navManage">Manage Products</button>
+      <button class="nav-btn hidden" data-view="allorders" id="navAllOrders">All Orders</button>
+      <button class="nav-btn" data-view="api">API Docs</button>
+    </div>
+    <div class="nav-actions">
+      <button class="cart-btn" id="cartBtn">🛒 <span class="cart-badge" id="cartCount">0</span></button>
+      <div id="authArea">
+        <button class="btn btn-outline" id="loginBtn">Login</button>
+        <button class="btn btn-primary" id="registerBtn">Register</button>
+      </div>
+      <div id="userArea" class="hidden">
+        <span class="user-pill" id="userName"></span>
+        <button class="btn btn-outline btn-sm" id="logoutBtn">Logout</button>
+      </div>
+    </div>
+  </nav>
+
+  <main class="main">
+    <!-- SHOP -->
+    <section id="view-shop" class="view active">
+      <div class="shop-header">
+        <h1>Our Products</h1>
+        <div class="filters">
+          <input type="text" id="searchInput" class="input" placeholder="Search products…" />
+          <select id="categoryFilter" class="input"><option value="">All Categories</option></select>
+        </div>
+      </div>
+      <div class="product-grid" id="productGrid"><div class="loading">Loading products…</div></div>
+    </section>
+
+    <!-- CART DRAWER -->
+    <aside class="cart-drawer hidden" id="cartDrawer">
+      <div class="cart-header"><h2>Shopping Cart</h2><button class="close-btn" id="closeCart">✕</button></div>
+      <div class="cart-items" id="cartItems"></div>
+      <div class="cart-footer">
+        <div class="cart-total">Total: <strong id="cartTotal">$0.00</strong></div>
+        <input type="text" id="shippingAddress" class="input" placeholder="Shipping address…" />
+        <button class="btn btn-primary full-width" id="checkoutBtn">Checkout</button>
+      </div>
+    </aside>
+    <div class="cart-overlay hidden" id="cartOverlay"></div>
+
+    <!-- MY ORDERS -->
+    <section id="view-orders" class="view hidden">
+      <h1>My Orders</h1>
+      <div id="ordersContent"><p class="empty-state">Login to see your orders.</p></div>
+    </section>
+
+    <!-- INVENTORY -->
+    <section id="view-inventory" class="view hidden">
+      <h1>Inventory Management</h1>
+      <p class="section-desc">Live stock levels. Admins can edit quantities inline.</p>
+      <div id="inventoryContent"><div class="loading">Loading inventory…</div></div>
+    </section>
+
+    <!-- ADMIN: DASHBOARD -->
+    <section id="view-dashboard" class="view hidden">
+      <h1>Admin Dashboard</h1>
+      <div id="dashboardContent"><div class="loading">Loading stats…</div></div>
+    </section>
+
+    <!-- ADMIN: MANAGE PRODUCTS -->
+    <section id="view-manage" class="view hidden">
+      <div class="section-top">
+        <h1>Manage Products</h1>
+        <button class="btn btn-primary" id="addProductBtn">+ Add Product</button>
+      </div>
+      <div id="manageContent"><div class="loading">Loading…</div></div>
+    </section>
+
+    <!-- ADMIN: ALL ORDERS -->
+    <section id="view-allorders" class="view hidden">
+      <h1>All Orders</h1>
+      <div id="allOrdersContent"><div class="loading">Loading orders…</div></div>
+    </section>
+
+    <!-- API DOCS -->
+    <section id="view-api" class="view hidden">
+      <h1>API Quick Reference</h1>
+      <p class="section-desc">Full interactive docs at <a href="/swagger" target="_blank">/swagger</a> ↗</p>
+      <div class="api-table-wrapper">
+        <table class="api-table">
+          <thead><tr><th>Method</th><th>Endpoint</th><th>Auth</th><th>Description</th></tr></thead>
+          <tbody>
+            <tr><td><span class="badge get">GET</span></td>    <td>/api/products</td>           <td>—</td>     <td>List products (?category= &amp; ?search=)</td></tr>
+            <tr><td><span class="badge get">GET</span></td>    <td>/api/products/{id}</td>       <td>—</td>     <td>Single product</td></tr>
+            <tr><td><span class="badge post">POST</span></td>  <td>/api/products</td>            <td>Admin</td> <td>Create product</td></tr>
+            <tr><td><span class="badge del">DELETE</span></td> <td>/api/products/{id}</td>       <td>Admin</td> <td>Delete product</td></tr>
+            <tr><td><span class="badge get">GET</span></td>    <td>/api/inventory</td>           <td>—</td>     <td>All inventory levels</td></tr>
+            <tr><td><span class="badge put">PUT</span></td>    <td>/api/inventory/{id}</td>      <td>Admin</td> <td>Update stock</td></tr>
+            <tr><td><span class="badge get">GET</span></td>    <td>/api/inventory/low-stock</td> <td>JWT</td>   <td>Low-stock items</td></tr>
+            <tr><td><span class="badge post">POST</span></td>  <td>/api/orders</td>              <td>JWT</td>   <td>Place order (Checkout)</td></tr>
+            <tr><td><span class="badge get">GET</span></td>    <td>/api/orders/mine</td>         <td>JWT</td>   <td>My orders</td></tr>
+            <tr><td><span class="badge get">GET</span></td>    <td>/api/orders</td>              <td>Admin</td> <td>All orders</td></tr>
+            <tr><td><span class="badge put">PUT</span></td>    <td>/api/orders/{id}/status</td>  <td>Admin</td> <td>Update order status</td></tr>
+            <tr><td><span class="badge get">GET</span></td>    <td>/api/dashboard</td>           <td>Admin</td> <td>Store stats</td></tr>
+            <tr><td><span class="badge post">POST</span></td>  <td>/api/auth/register</td>       <td>—</td>     <td>Register</td></tr>
+            <tr><td><span class="badge post">POST</span></td>  <td>/api/auth/login</td>          <td>—</td>     <td>Login → JWT</td></tr>
+            <tr><td><span class="badge get">GET</span></td>    <td>/health</td>                  <td>—</td>     <td>Health check</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="demo-creds">
+        <h3>Demo Credentials</h3>
+        <div class="creds-grid">
+          <div class="cred-card"><div class="cred-role">Customer</div><code>demo@tecomm.dev</code><br/><code>Password1!</code></div>
+          <div class="cred-card"><div class="cred-role admin">Admin</div><code>admin@tecomm.dev</code><br/><code>Admin123!</code></div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- MODALS -->
+  <div class="modal-backdrop hidden" id="modalBackdrop"></div>
+
+  <!-- Login -->
+  <div class="modal hidden" id="loginModal">
+    <div class="modal-header"><h2>Login</h2><button class="close-btn" data-close="loginModal">✕</button></div>
+    <div class="modal-body">
+      <label class="label">Email</label>
+      <input type="email" id="loginEmail" class="input" placeholder="demo@tecomm.dev" />
+      <label class="label">Password</label>
+      <input type="password" id="loginPassword" class="input" placeholder="Password1!" />
+      <div class="error-msg hidden" id="loginError"></div>
+      <button class="btn btn-primary full-width" style="margin-top:1rem" id="loginSubmit">Login</button>
+      <p class="modal-footer-text">No account? <a href="#" id="switchToRegister">Register</a></p>
+    </div>
+  </div>
+
+  <!-- Register -->
+  <div class="modal hidden" id="registerModal">
+    <div class="modal-header"><h2>Create Account</h2><button class="close-btn" data-close="registerModal">✕</button></div>
+    <div class="modal-body">
+      <label class="label">Full Name</label>
+      <input type="text" id="regName" class="input" placeholder="Jane Smith" />
+      <label class="label">Email</label>
+      <input type="email" id="regEmail" class="input" placeholder="jane@example.com" />
+      <label class="label">Password</label>
+      <input type="password" id="regPassword" class="input" placeholder="Min. 8 characters" />
+      <div class="error-msg hidden" id="registerError"></div>
+      <button class="btn btn-primary full-width" style="margin-top:1rem" id="registerSubmit">Create Account</button>
+      <p class="modal-footer-text">Already have an account? <a href="#" id="switchToLogin">Login</a></p>
+    </div>
+  </div>
+
+  <!-- Product Detail -->
+  <div class="modal modal-wide hidden" id="productModal">
+    <div class="modal-header">
+      <h2 id="productModalName">Product</h2>
+      <button class="close-btn" data-close="productModal">✕</button>
+    </div>
+    <div class="modal-body product-detail-body">
+      <img id="productModalImg" src="" alt="" class="product-detail-img" />
+      <div class="product-detail-info">
+        <span class="product-category" id="productModalCategory"></span>
+        <p id="productModalDesc" style="color:var(--text-muted);line-height:1.7;margin:.75rem 0"></p>
+        <div class="product-detail-price" id="productModalPrice"></div>
+        <div id="productModalStock" style="margin:.5rem 0"></div>
+        <div style="display:flex;align-items:center;gap:.75rem;margin-top:1.25rem">
+          <div style="display:flex;align-items:center;gap:.5rem">
+            <button class="qty-btn" onclick="detailQtyChange(-1)">−</button>
+            <span id="detailQty" style="min-width:24px;text-align:center;font-weight:700">1</span>
+            <button class="qty-btn" onclick="detailQtyChange(1)">+</button>
+          </div>
+          <button class="btn btn-primary" id="productModalAddBtn" onclick="addFromDetail()">Add to Cart</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Add Product -->
+  <div class="modal modal-wide hidden" id="addProductModal">
+    <div class="modal-header"><h2>Add New Product</h2><button class="close-btn" data-close="addProductModal">✕</button></div>
+    <div class="modal-body">
+      <div class="form-grid">
+        <div><label class="label">Product Name *</label><input type="text" id="apName" class="input" placeholder="e.g. Gaming Mouse" /></div>
+        <div><label class="label">Category *</label><input type="text" id="apCategory" class="input" placeholder="e.g. Electronics" /></div>
+        <div><label class="label">Price ($) *</label><input type="number" id="apPrice" class="input" placeholder="29.99" min="0.01" step="0.01" /></div>
+        <div><label class="label">Initial Stock</label><input type="number" id="apStock" class="input" value="50" min="0" /></div>
+        <div><label class="label">Reorder Threshold</label><input type="number" id="apThreshold" class="input" value="10" min="0" /></div>
+        <div><label class="label">Image URL <span style="color:var(--text-muted)">(optional)</span></label><input type="text" id="apImage" class="input" placeholder="https://…" /></div>
+      </div>
+      <label class="label">Description *</label>
+      <textarea id="apDesc" class="input" rows="3" placeholder="Short product description…" style="resize:vertical;margin-top:.25rem"></textarea>
+      <div class="error-msg hidden" id="addProductError"></div>
+      <button class="btn btn-primary full-width" style="margin-top:1rem" id="addProductSubmit">Create Product</button>
+    </div>
+  </div>
+
+  <div class="toast hidden" id="toast"></div>
+  <script src="/js/app.js"></script>
+</body>
+</html>

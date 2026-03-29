@@ -1,0 +1,20 @@
+database:
+  name: tecomm-db
+  plan: free
+
+services:
+  - type: web
+    name: tecomm
+    plan: free
+    region: oregon
+    dockerfilePath: ./Dockerfile
+    healthCheckPath: /health
+    envVars:
+      - key: ASPNETCORE_ENVIRONMENT
+        value: Production
+      - key: Jwt__Key
+        sync: false
+      - key: Jwt__Issuer
+        value: TecommAPI
+      - key: Jwt__Audience
+        value: TecommClient
